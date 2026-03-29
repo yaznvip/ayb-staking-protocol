@@ -3,17 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYB Institutional Yield Farm | Mobile Optimized</title>
+    <title>AYB Institutional Yield Farm | Pro Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { background-color: #030304; color: #ffffff; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .gold-grad-card { background: linear-gradient(135deg, rgba(243, 186, 47, 0.05) 0%, rgba(217, 119, 6, 0.15) 100%); border: 1px solid rgba(243, 186, 47, 0.2); border-radius: 24px; }
-        .gold-button { background: linear-gradient(90deg, #f3ba2f 0%, #d97706 100%); color: #000; font-weight: 800; border-radius: 12px; transition: 0.3s; }
+        .gold-button { background: linear-gradient(90deg, #f3ba2f 0%, #d97706 100%); color: #000; font-weight: 800; border-radius: 12px; transition: 0.3s; cursor: pointer; }
         .gold-button:active { transform: scale(0.95); }
-        .input-dark { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; padding: 12px; text-align: center; width: 100%; }
+        .input-dark { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; padding: 12px; text-align: center; width: 100%; outline: none; }
         .nav-glass { background: rgba(3, 3, 4, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 50; }
+        
+        /* Modal Styles */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-content { background: #121214; border: 1px solid #f3ba2f55; border-radius: 24px; max-width: 450px; width: 100%; padding: 30px; position: relative; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #f3ba2f; }
+
+        /* Dropdown Menu */
+        #menuDropdown { display: none; position: absolute; right: 20px; top: 70px; background: #1a1a1c; border: 1px solid #ffffff11; border-radius: 12px; width: 180px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 60; }
+        .menu-item { padding: 15px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 1px solid #ffffff05; }
+        .menu-item:hover { background: rgba(243, 186, 47, 0.1); color: #f3ba2f; }
     </style>
 </head>
 <body class="min-h-screen pb-20">
@@ -23,8 +33,44 @@
             <div class="w-8 h-8 bg-[#f3ba2f] rounded-lg flex items-center justify-center font-black text-black">A</div>
             <h1 class="text-xl font-black tracking-tighter">AYB <span class="text-[#f3ba2f]">PROTOCOL</span></h1>
         </div>
-        <button id="connectBtn" class="gold-button px-5 py-2 text-xs uppercase tracking-widest">Connect Wallet</button>
+        <div class="flex items-center gap-3">
+            <button id="connectBtn" class="gold-button px-4 py-2 text-[10px] uppercase tracking-widest">Connect Wallet</button>
+            <div onclick="toggleMenu()" class="cursor-pointer p-2 text-[#f3ba2f] text-2xl font-bold">⋮</div>
+        </div>
     </nav>
+
+    <div id="menuDropdown">
+        <div class="menu-item" onclick="openModal('infoModal')">ℹ️ Platform Info</div>
+        <div class="menu-item" onclick="openModal('refModal')">🔗 Referral System</div>
+        <div class="menu-item" onclick="window.open('https://arbitrum.io', '_blank')">🌐 Network Status</div>
+    </div>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('infoModal')">&times;</span>
+            <h2 class="text-[#f3ba2f] font-black text-xl mb-4">LIVE DEMO NOTICE</h2>
+            <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
+                <p>This platform is a <span class="text-white font-bold">LIVE DEMO</span> developed for portfolio purposes.</p>
+                <p>I am a <span class="text-[#f3ba2f]">Full-Stack Web3 Developer</span>, and this application showcases my ability to integrate Smart Contracts with high-end User Interfaces.</p>
+                <p class="bg-red-500/10 p-3 rounded-lg border border-red-500/20 text-red-400">
+                    <strong>Disclaimer:</strong> This is NOT a real investment platform. Do not interact with real funds unless you understand this is for testing and demonstration only.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="refModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('refModal')">&times;</span>
+            <h2 class="text-[#f3ba2f] font-black text-xl mb-4">REFERRAL PROGRAM</h2>
+            <p class="text-xs text-gray-400 mb-6">Invite others to the AYB Protocol and earn rewards from their staking activity.</p>
+            <div class="bg-black/40 p-3 rounded-xl border border-white/5 space-y-3">
+                <label class="text-[10px] uppercase text-gray-500 font-bold">Your Unique Link</label>
+                <input id="refUrl" readonly class="bg-transparent w-full text-[11px] text-[#f3ba2f] outline-none" value="Connect wallet to generate">
+                <button onclick="copyRef()" class="gold-button w-full py-3 text-[10px] mt-2">COPY LINK</button>
+            </div>
+        </div>
+    </div>
 
     <div class="max-w-4xl mx-auto px-4 mt-8">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -32,7 +78,7 @@
                 <p class="text-[10px] uppercase text-gray-500 mb-1">Total TVL</p>
                 <h2 id="tvlDisplay" class="text-lg font-bold">0.00</h2>
             </div>
-            <div class="gold-grad-card p-5 text-center border-[#f3ba2f]/40">
+            <div class="gold-grad-card p-5 text-center">
                 <p class="text-[10px] uppercase text-gray-500 mb-1">Rewards</p>
                 <h2 id="pendingRewards" class="text-lg font-bold text-[#f3ba2f]">0.0000</h2>
             </div>
@@ -51,55 +97,29 @@
             <button onclick="withdrawAll()" class="flex-1 py-3 bg-red-900/20 border border-red-900/40 rounded-xl text-xs font-bold text-red-400">Emergency Exit</button>
         </div>
 
-        <div class="space-y-6 mb-12">
+        <div class="space-y-6">
             <div class="gold-grad-card p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-t-4 border-orange-500">
-                <div>
-                    <h4 class="font-black text-orange-500">BRONZE POOL</h4>
-                    <p class="text-3xl font-black">15% APY</p>
-                </div>
-                <div class="flex gap-2 w-full md:w-auto">
-                    <input type="number" id="input0" placeholder="Amount" class="input-dark">
-                    <button onclick="stake(0)" class="gold-button px-8 py-3 uppercase text-xs">Stake</button>
-                </div>
+                <div><h4 class="font-black text-orange-500 uppercase text-xs">Bronze Pool</h4><p class="text-3xl font-black">15% APY</p></div>
+                <div class="flex gap-2 w-full md:w-auto"><input type="number" id="input0" placeholder="0.0" class="input-dark"><button onclick="stake(0)" class="gold-button px-8 py-3 uppercase text-xs">Stake</button></div>
             </div>
 
-            <div class="gold-grad-card p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-t-4 border-white relative">
-                <div class="absolute -top-3 right-6 bg-white text-black text-[8px] font-black px-3 py-1 rounded-full uppercase">Popular</div>
-                <div>
-                    <h4 class="font-black text-gray-300">SILVER POOL</h4>
-                    <p class="text-3xl font-black">35% APY</p>
-                </div>
-                <div class="flex gap-2 w-full md:w-auto">
-                    <input type="number" id="input1" placeholder="Amount" class="input-dark">
-                    <button onclick="stake(1)" class="gold-button px-8 py-3 uppercase text-xs">Stake</button>
-                </div>
+            <div class="gold-grad-card p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-t-4 border-white">
+                <div><h4 class="font-black text-gray-300 uppercase text-xs">Silver Pool</h4><p class="text-3xl font-black">35% APY</p></div>
+                <div class="flex gap-2 w-full md:w-auto"><input type="number" id="input1" placeholder="0.0" class="input-dark"><button onclick="stake(1)" class="gold-button px-8 py-3 uppercase text-xs">Stake</button></div>
             </div>
 
             <div class="gold-grad-card p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-t-4 border-[#f3ba2f]">
-                <div>
-                    <h4 class="font-black text-[#f3ba2f]">GOLD POOL</h4>
-                    <p class="text-3xl font-black">80% APY</p>
-                </div>
-                <div class="flex gap-2 w-full md:w-auto">
-                    <input type="number" id="input2" placeholder="Amount" class="input-dark">
-                    <button onclick="stake(2)" class="gold-button px-8 py-3 uppercase text-xs">Stake</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="gold-grad-card p-8 text-center border-dashed border-white/20">
-            <h3 class="text-sm font-bold uppercase tracking-widest mb-4">Referral Link</h3>
-            <div class="flex items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/5">
-                <input id="refUrl" readonly class="bg-transparent flex-1 px-4 text-[10px] text-gray-400 outline-none" value="Connect wallet to generate">
-                <button onclick="copyRef()" class="gold-button px-4 py-2 text-[10px]">COPY</button>
+                <div><h4 class="font-black text-[#f3ba2f] uppercase text-xs">Gold Pool</h4><p class="text-3xl font-black">80% APY</p></div>
+                <div class="flex gap-2 w-full md:w-auto"><input type="number" id="input2" placeholder="0.0" class="input-dark"><button onclick="stake(2)" class="gold-button px-8 py-3 uppercase text-xs">Stake</button></div>
             </div>
         </div>
     </div>
 
     <script>
+        // CORE LOGIC REMAINS UNTOUCHED
         const STAKING_CA = "0xc012526f102e7b5F98Dce33a989e803b232D0AB7";
         const TOKEN_CA = "0x4b8D134A91405F8Dd3bc679F5B2b0B9283Cb7e15";
-        const ARBITRUM_CHAIN_ID = "0xa4b1"; // Arbitrum One
+        const ARBITRUM_CHAIN_ID = "0xa4b1";
 
         const FARM_ABI = [
             "function stake(uint256 _amount, uint256 _tier, address _referrer) external",
@@ -113,36 +133,46 @@
 
         let signer, farmContract, tokenContract;
 
+        // UI Helpers
+        function toggleMenu() {
+            const m = document.getElementById('menuDropdown');
+            m.style.display = m.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+            document.getElementById('menuDropdown').style.display = 'none';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.cursor-pointer')) {
+                document.getElementById('menuDropdown').style.display = 'none';
+            }
+        }
+
         async function connect() {
             if (!window.ethereum) {
-                // If on mobile and no ethereum provider, try to open MetaMask App
-                const dappUrl = window.location.href.split('://')[1];
-                window.location.href = `https://metamask.app.link/dapp/${dappUrl}`;
+                window.location.href = `https://metamask.app.link/dapp/${window.location.href.split('://')[1]}`;
                 return;
             }
-
             try {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
-                
-                // Ensure Arbitrum Network
                 const { chainId } = await provider.getNetwork();
                 if (chainId !== 42161) {
-                    await window.ethereum.request({
-                        method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: ARBITRUM_CHAIN_ID }],
-                    });
+                    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: ARBITRUM_CHAIN_ID }] });
                 }
-
                 signer = provider.getSigner();
                 const address = await signer.getAddress();
-                
                 farmContract = new ethers.Contract(STAKING_CA, FARM_ABI, signer);
                 tokenContract = new ethers.Contract(TOKEN_CA, TOKEN_ABI, signer);
-
                 document.getElementById('connectBtn').innerText = address.slice(0,6) + "...";
                 document.getElementById('refUrl').value = window.location.origin + window.location.pathname + "?ref=" + address;
-                
                 loadData();
                 setInterval(loadData, 8000);
             } catch (err) { console.error(err); }
@@ -156,7 +186,6 @@
                 farmContract.totalStaked(),
                 farmContract.users(user)
             ]);
-
             document.getElementById('tvlDisplay').innerText = parseFloat(ethers.utils.formatEther(total)).toFixed(0);
             document.getElementById('pendingRewards').innerText = parseFloat(ethers.utils.formatEther(pending)).toFixed(4);
             document.getElementById('myStakeDisplay').innerText = parseFloat(ethers.utils.formatEther(userObj.amount)).toFixed(0);
@@ -168,7 +197,6 @@
             if(!val || val <= 0) return alert("Enter amount");
             const amount = ethers.utils.parseEther(val);
             const ref = new URLSearchParams(window.location.search).get('ref') || "0x0000000000000000000000000000000000000000";
-
             try {
                 const appTx = await tokenContract.approve(STAKING_CA, amount);
                 await appTx.wait();
@@ -178,10 +206,7 @@
             } catch (err) { alert(err.message); }
         }
 
-        async function claimRewards() {
-            try { await (await farmContract.claim()).wait(); alert("Claimed!"); } catch (err) { alert(err.message); }
-        }
-
+        async function claimRewards() { try { await (await farmContract.claim()).wait(); alert("Claimed!"); } catch (err) { alert(err.message); } }
         async function withdrawAll() {
             try {
                 const user = await signer.getAddress();
@@ -193,7 +218,7 @@
 
         function copyRef() {
             navigator.clipboard.writeText(document.getElementById('refUrl').value);
-            alert("Copied!");
+            alert("Referral Link Copied!");
         }
 
         document.getElementById('connectBtn').onclick = connect;
